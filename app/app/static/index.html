@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motor de Decisão Tributária</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🏢 Motor de Decisão Tributária</h1>
+                <p>Análise profissional: Simples Nacional vs Regime Regular com IBS/CBS</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="upload">📤 Upload de Documentos</button>
+                <button class="tab-button" data-tab="dashboard">📊 Dashboard</button>
+                <button class="tab-button" data-tab="analise">📈 Análise Comparativa</button>
+                <button class="tab-button" data-tab="recomendacao">✅ Recomendação</button>
+            </div>
+
+            <!-- Tab 1: Upload -->
+            <div id="upload" class="tab-content active">
+                <section class="card">
+                    <h2>Importar Documentos</h2>
+                    <p>Carregue os arquivos PDF com os dados da sua empresa:</p>
+
+                    <div class="upload-area" id="uploadArea">
+                        <p>📁 Clique ou arraste arquivos PDF aqui</p>
+                        <input type="file" id="fileInput" multiple accept=".pdf" hidden>
+                    </div>
+
+                    <div id="fileList" class="file-list"></div>
+
+                    <button class="btn btn-primary" id="processBtn">Processar Documentos</button>
+                    <div id="processingStatus" class="status-message"></div>
+                </section>
+
+                <section class="card">
+                    <h3>📋 Documentos Esperados</h3>
+                    <ul>
+                        <li><strong>Simples Nacional WAS.pdf</strong> - PGDAS com cálculo do DAS</li>
+                        <li><strong>Entradas.pdf</strong> - Relação de fornecedores e compras</li>
+                        <li><strong>Saídas.pdf</strong> - Vendas de mercadoria (ICMS)</li>
+                        <li><strong>Serviços.pdf</strong> - Receitas de serviços (ISS)</li>
+                    </ul>
+                </section>
+            </div>
+
+            <!-- Tab 2: Dashboard -->
+            <div id="dashboard" class="tab-content">
+                <section class="card">
+                    <h2>Dashboard de Dados</h2>
+
+                    <div class="dashboard-grid">
+                        <!-- Empresa -->
+                        <div class="dashboard-item">
+                            <h3>Empresa</h3>
+                            <div class="info-group">
+                                <label>CNPJ:</label>
+                                <span id="empresaCNPJ">-</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Razão Social:</label>
+                                <span id="empresaRazao">-</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Regime:</label>
+                                <span id="empresaRegime">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Receitas -->
+                        <div class="dashboard-item">
+                            <h3>Receitas (jan-ago/2026)</h3>
+                            <div class="info-group">
+                                <label>Vendas:</label>
+                                <span id="receitaVendas">R$ -</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Serviços:</label>
+                                <span id="receitaServicos">R$ -</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Total:</label>
+                                <span id="receitaTotal" class="highlight">R$ -</span>
+                            </div>
+                        </div>
+
+                        <!-- Compras -->
+                        <div class="dashboard-item">
+                            <h3>Compras (jan-ago/2026)</h3>
+                            <div class="info-group">
+                                <label>Total de Compras:</label>
+                                <span id="comprasTotal">R$ -</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Número de Fornecedores:</label>
+                                <span id="numFornecedores">-</span>
+                            </div>
+                        </div>
+
+                        <!-- DAS -->
+                        <div class="dashboard-item">
+                            <h3>DAS 2026</h3>
+                            <div class="info-group">
+                                <label>DAS Pago:</label>
+                                <span id="dasPago" class="highlight">R$ -</span>
+                            </div>
+                            <div class="info-group">
+                                <label>Carga Efetiva:</label>
+                                <span id="cargaEfetiva">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Top Fornecedores -->
+                <section class="card">
+                    <h2>Top 10 Fornecedores por Compras</h2>
+                    <div id="topFornecedores" class="table-container">
+                        <p>Nenhum dado carregado</p>
+                    </div>
+                </section>
+
+                <!-- Top Clientes -->
+                <section class="card">
+                    <h2>Top 10 Clientes por Faturamento</h2>
+                    <div id="topClientes" class="table-container">
+                        <p>Nenhum dado carregado</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Tab 3: Análise Comparativa -->
+            <div id="analise" class="tab-content">
+                <section class="card">
+                    <h2>Comparação de Cenários</h2>
+
+                    <div class="scenarios-grid">
+                        <!-- Cenário 2026 Real -->
+                        <div class="scenario-card">
+                            <h3>📋 2026 Real</h3>
+                            <div class="scenario-value">
+                                <span id="cena2026">R$ -</span>
+                            </div>
+                            <p class="scenario-desc">Situação atual (PGDAS)</p>
+                        </div>
+
+                        <!-- Cenário Simples Puro -->
+                        <div class="scenario-card">
+                            <h3>🏪 2027 Simples Puro</h3>
+                            <div class="scenario-value">
+                                <span id="cenaSimplesPuro">R$ -</span>
+                            </div>
+                            <p class="scenario-desc">Permanecendo no Simples</p>
+                        </div>
+
+                        <!-- Cenário Híbrido -->
+                        <div class="scenario-card hybrid">
+                            <h3>🔀 2027 Híbrido (IBS/CBS)</h3>
+                            <div class="scenario-value">
+                                <span id="cenaHibrido">R$ -</span>
+                            </div>
+                            <p class="scenario-desc">Simples + Regime Regular</p>
+                        </div>
+                    </div>
+
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Métrica</th>
+                                    <th>2026 Real</th>
+                                    <th>2027 Simples</th>
+                                    <th>2027 Híbrido</th>
+                                    <th>Diferença</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 20px; color: #999;">Nenhum dado carregado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Análise de Créditos -->
+                <section class="card">
+                    <h2>Análise de Créditos (Híbrido)</h2>
+                    <div class="credits-grid">
+                        <div class="credit-item">
+                            <label>Crédito IBS Potencial:</label>
+                            <span id="creditoIBS" class="value">R$ -</span>
+                        </div>
+                        <div class="credit-item">
+                            <label>Crédito CBS Potencial:</label>
+                            <span id="creditoCBS" class="value">R$ -</span>
+                        </div>
+                        <div class="credit-item">
+                            <label>Crédito Total:</label>
+                            <span id="creditoTotal" class="value highlight">R$ -</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Tab 4: Recomendação -->
+            <div id="recomendacao" class="tab-content">
+                <section class="card">
+                    <h2>Recomendação do Motor</h2>
+
+                    <div id="recommendationBox" class="recommendation-box">
+                        <p style="text-align: center; color: #999;">Carregue os documentos para gerar recomendação</p>
+                    </div>
+
+                    <div class="recommendation-details">
+                        <div class="detail-item">
+                            <h3>Economia Anual Potencial</h3>
+                            <p id="economiaAnual" class="detail-value">R$ -</p>
+                        </div>
+
+                        <div class="detail-item">
+                            <h3>Perfil da Empresa</h3>
+                            <ul id="perfilEmpresa">
+                                <li>Aguardando dados...</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-item">
+                            <h3>Risco Comercial</h3>
+                            <p id="riscoComercial">-</p>
+                        </div>
+
+                        <div class="detail-item">
+                            <h3>Premissas e Limitações</h3>
+                            <ul id="premissas">
+                                <li>Dados baseados em jan-ago/2026</li>
+                                <li>CBS utilizada como estimativa: 8,80%</li>
+                                <li>Aguardando validação de CNPJ de fornecedores/clientes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <h2>📋 Gerar Relatório Executivo</h2>
+                    <button class="btn btn-primary" id="generateReportBtn">Baixar Relatório em PDF</button>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Motor de Decisão Tributária v0.2.0 | Análise profissional para regime tributário optimal em 2027</p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
